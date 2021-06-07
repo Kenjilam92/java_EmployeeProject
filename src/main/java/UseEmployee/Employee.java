@@ -7,11 +7,11 @@ import tools.*;
 
 public class Employee implements Print{
 	public static Integer empAutoId; 
+	private static ArrayList<Employee> data;
 	private int empNo;
 	private String name;
 	private double salary;
 	private Address address;
-	private static ArrayList<Employee> data;
 	private boolean isDeleted;
 	
 	public Employee( String n, double s, String c, String st) {
@@ -30,6 +30,18 @@ public class Employee implements Print{
 		address = new Address(c,st);
 		isDeleted=false;
 		data.add(this);
+	}
+	public Employee() {
+		// TODO Auto-generated constructor stub
+		if (Employee.empAutoId==null) {
+			Employee.empAutoId=1;
+		}
+		else {
+			Employee.empAutoId++;
+		}
+		if (data == null) {
+			data= new ArrayList<Employee>();
+		}
 	}
 	public int getEmpNo() {
 		return empNo;
@@ -55,58 +67,13 @@ public class Employee implements Print{
 		address.setCity(c);
 		address.setState(s);
 		return this;
-	}
-	
+	}	
 	public void showInfo() {
 		println("|\t" + empNo + "\t|\t"+ name + "\t|\t$" + salary + "\t\t|\t" +address.toString());
-	}
-	public static ArrayList<Employee> getData(){
-		return data;
-	}
-	public static void displayAll() {
-		System.out.println("|\tNo.\t|\tName\t|\tsalary\t\t|\tAddress");
-		data.stream()
-				.filter( emp -> emp.getIsDeleted() == false)
-				.collect(Collectors.toList())
-				.forEach( emp -> emp.showInfo());
-	}
-	
-	
-	
-	public static Employee findByEmployeeNo( int empNo) {
-		return data .stream()
-					.filter( emp -> emp.getEmpNo() == empNo && emp.isDeleted == false)
-					.findFirst()
-					.orElse(null);
-	}
-	
-	public static void  showRecycleBin () {
-		System.out.println("|\tNo.\t|\tName\t|\tsalary\t\t|\tAddress");
-		data.stream()
-			.filter(emp -> emp.isDeleted == true)
-			.collect(Collectors.toList())
-			.forEach(  Employee::showInfo );			
-	}
-	public static Employee selectAnDeletedEmployee(int empNo) {
-		return data .stream()
-					.filter( emp -> emp.getEmpNo() == empNo && emp.isDeleted == true)
-					.findFirst()
-					.orElse(null);
-	}
-	public static void permanentDelete( Employee e) {
-//		data.remove( data	.stream()
-//							.filter( emp -> emp.getEmpNo() == empNo && emp.isDeleted == true)
-//							.findFirst()
-//							.orElse(null)
-//		);
-		data.remove(e);
-	}
-	
-	
+	}	
 	public double calculateYearlySalary() {
 		return salary*40*52;
 	}
-	
 	public Employee updateEmployee( Scanner input ) {
 		println("What do you want to update?");
 		println("1. Name | 2. salary | 3. Adrress | 4.Cancel");
@@ -139,7 +106,6 @@ public class Employee implements Print{
 		}
 		return this;
 	}
-	
 	public boolean getIsDeleted() {
 		return isDeleted;
 	}
@@ -152,5 +118,38 @@ public class Employee implements Print{
 		isDeleted = false;
 		println(name + " is restored");
 		return true;
+	}
+	
+	public static ArrayList<Employee> getData(){
+		return data;
+	}
+	public static void displayAll() {
+		System.out.println("|\tNo.\t|\tName\t|\tsalary\t\t|\tAddress");
+		data.stream()
+				.filter( emp -> emp.getIsDeleted() == false)
+				.collect(Collectors.toList())
+				.forEach( emp -> emp.showInfo());
+	}
+	public static Employee findByEmployeeNo( int empNo) {
+		return data .stream()
+					.filter( emp -> emp.getEmpNo() == empNo && emp.isDeleted == false)
+					.findFirst()
+					.orElse(null);
+	}
+	public static void  showRecycleBin () {
+		System.out.println("|\tNo.\t|\tName\t|\tsalary\t\t|\tAddress");
+		data.stream()
+			.filter(emp -> emp.isDeleted == true)
+			.collect(Collectors.toList())
+			.forEach(  Employee::showInfo );			
+	}
+	public static Employee selectAnDeletedEmployee(int empNo) {
+		return data .stream()
+					.filter( emp -> emp.getEmpNo() == empNo && emp.isDeleted == true)
+					.findFirst()
+					.orElse(null);
+	}
+	public static void permanentDelete( Employee e) {
+		data.remove(e);
 	}
 }

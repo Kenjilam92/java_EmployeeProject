@@ -1,9 +1,15 @@
 package UseEmployee;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+
 public class UseEmployee {
+	private static final Logger LOGGER = Logger.getLogger(UseEmployee.class.getName());
 	public static void main (String[] args) {
+		LOGGER.info("Logger Name: "+LOGGER.getName());
+        LOGGER.warning("can be outbound or unexpected value");
 		Object[][] employees = {
 				{"Kenji", 12.45, "Centreville", "Virginia"},
 				{"Alex", 8.45, "Fairfax", "Virginia"},
@@ -114,13 +120,17 @@ public class UseEmployee {
 				}
 			}
 			catch(InputMismatchException e) {
+				println("");
+				printBorder();
 				println("Program is crashed! Please only type avaluable option");
 				println(e);
-				input.next();
+				LOGGER.log(Level.SEVERE, "type wrong input \"" + input.next() + "\"", e);
 			}
 			catch(Exception e) {
+				printBorder();
 				println("Program is crashed! Please try again");
 				println(e);
+				LOGGER.log(Level.SEVERE, "other error", e);
 			}
 		}
 		while(isContinue);
