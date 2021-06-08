@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 
 public class UseEmployee {
 	private static final Logger LOGGER = Logger.getLogger(UseEmployee.class.getName());
+	
 	public static void main (String[] args) {
 		LOGGER.info("Logger Name: "+LOGGER.getName());
-        LOGGER.warning("can be outbound or unexpected value");
+//        LOGGER.warning("can be outbound or unexpected value");
+		EmployeeServiceImpl employeeServiceImpl = new EmployeeServiceImpl();
 		Object[][] employees = {
 				{"Kenji", 12.45, "Centreville", "Virginia"},
 				{"Alex", 8.45, "Fairfax", "Virginia"},
@@ -18,7 +20,7 @@ public class UseEmployee {
 		};
 //		ArrayList<Employee> data = new ArrayList<Employee>();
 		for(Object[] emp : employees) {
-			new Employee((String) emp[0], (double) emp[1], (String) emp[2], (String) emp[3] );
+			employeeServiceImpl.getData().add(new Employee((String) emp[0], (double) emp[1], (String) emp[2], (String) emp[3] ));
 		}
 		
 		boolean isContinue = true;
@@ -41,7 +43,7 @@ public class UseEmployee {
 				switch(service) {
 					case 1:{
 						printBorder();
-						Employee.displayAll();
+						employeeServiceImpl.getData();
 						break;
 					}
 					case 2:{
@@ -177,7 +179,6 @@ public class UseEmployee {
 		print("Answer: ");
 		return input.nextInt();
 	}
-	
 	public static void println(Object a ) {
 		System.out.println(a);
 	}
