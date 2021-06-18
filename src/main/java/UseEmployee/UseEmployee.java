@@ -12,16 +12,6 @@ public class UseEmployee {
 		LOGGER.info("Logger Name: "+LOGGER.getName());
 //        LOGGER.warning("can be outbound or unexpected value");
 		EmployeeServiceImpl employeeServiceImpl = new EmployeeServiceImpl();
-		Object[][] employees = {
-				{"Kenji", 12.45, "Centreville", "Virginia"},
-				{"Alex", 8.45, "Fairfax", "Virginia"},
-				{"John", 11.32, "Dallas","Texas   "},
-				{"James",9.5,"Chicago","Illinois "}
-		};
-//		ArrayList<Employee> data = new ArrayList<Employee>();
-		for(Object[] emp : employees) {
-			employeeServiceImpl.getData().add(new Employee((String) emp[0], (double) emp[1], (String) emp[2], (String) emp[3] ));
-		}
 		
 		boolean isContinue = true;
 		Scanner input = new Scanner(System.in);
@@ -35,22 +25,22 @@ public class UseEmployee {
 				println("1. Show all employees");
 				println("2. Find an employee by employee #");
 				println("3. Show anual salary");
-				println("4. Update an employee");
-				println("5. Delete an employee");
-				println("6. Recycle bin");
+				println("4. Add an employee");
+				println("5. Update an employee");
+				println("6. Delete an employee");
 				println("7. Quit");
 				int service = getIntAnswer(input);
 				switch(service) {
 					case 1:{
 						printBorder();
-						employeeServiceImpl.getData();
+						employeeServiceImpl.displayAll();
 						break;
 					}
 					case 2:{
 						printBorder();
 						println("Please type an employee #");
 						int empNo = getIntAnswer(input);
-						Employee result = Employee.findByEmployeeNo(empNo);
+						Employee result = employeeServiceImpl.findEmployeeByNo(empNo);
 						if (result == null) {
 							println("NO RESULT WAS FOUND");
 						}
@@ -60,56 +50,94 @@ public class UseEmployee {
 						}
 						continue;
 					}
+					//Show Annual Salary
 					case 3:{
 						printBorder();
-						Employee selected = selectEmployee(input);
-						println(selected.getName()+"'s anual salary: " + selected.calculateYearlySalary() );
+						println("Please type an employee #");
+						int empNo = getIntAnswer(input);
+						Employee e = employeeServiceImpl.findEmployeeByNo(empNo);
+						if(e==null) {
+							println("Data not found");
+							break; 
+						}
+						println(e.getName()+"'s anual salary: " + employeeServiceImpl.calculateYearlySalary(e) );
 						break;
 					}
+					//Add
 					case 4:{
 						printBorder();
-						Employee selected = selectEmployee(input);
-						selected.updateEmployee(input);
+						print("Employee No: ");
+						int empno = input.nextInt();
+						print("Employee Name: ");
+						String name = input.next();
+						print("Salary hour rate: ");
+						double salary = input.nextDouble();
+						print("City: ");
+						String city = input.next();
+						print("State: ");
+						
+						String state = input.next();
+						Employee newEmp = new Employee(empno,name,salary,city,state);
+						employeeServiceImpl.addEmployee(newEmp);
 						break;
 					}
+					//Update
 					case 5:{
 						printBorder();
-						Employee selected = selectEmployee(input);
-						selected.delete();
-						break;
-					}
-					case 6:{
-						printBorder();
-						println("Here is the list of deleted employee");
-						printBorder();
-						Employee.showRecycleBin();
-						printBorder();
-						println("What do you want to do?");
-						println("1. Restore | 2. Delete permanently | 3. Back");
-						boolean isStay = true;
+						println("Please type an employee #");
+						int empNo = getIntAnswer(input);
+						Employee e = employeeServiceImpl.findEmployeeByNo(empNo);
+						if(e==null) {
+							println("Data not found");
+							break; 
+						}
+						boolean keepEdit = true;
 						do {
-							switch (getIntAnswer(input)) {
+							System.out.println("What do you want to update?");
+							System.out.println("1. Name | 2. salary | 3. Adrress | 4.Back");
+							System.out.print("Answer: ");
+							switch(input.nextInt()) {
 								case 1:{
-									Employee selected = selectDeletedEmployee(input);
-									selected.restore();
-									isStay=false;
+									System.out.print("New name: ");
+									e.setName(input.next());
 									break;
 								}
 								case 2:{
-									Employee selected = selectDeletedEmployee(input);
-									Employee.permanentDelete(selected);
-									isStay=false;
+									System.out.print("New salary: ");
+									e.setSalary(input.nextDouble());
 									break;
 								}
 								case 3:{
-									isStay=false;
+									System.out.print("City: ");
+									e.getAddress().setCity(input.next());
+									System.out.print("State: ");
+									e.getAddress().setState(input.next());
 									break;
 								}
-								default:{
-									println("Invalid input! Please try again");
+								case 4: {
+									keepEdit = false;
+									break;
+								}
+								default: {
+									System.out.println("Invalid value!");
 								}
 							}
-						}while(isStay);
+						}
+						while (keepEdit);
+						employeeServiceImpl.updateEmployee(e);
+						break;
+					}
+					//Delete
+					case 6:{
+						printBorder();
+						println("Please type an employee #");
+						int empNo = getIntAnswer(input);
+						Employee selected = employeeServiceImpl.findEmployeeByNo(empNo);
+						if(selected==null) {
+							println("Data not found");
+							break; 
+						}
+						employeeServiceImpl.deleteEmployee(selected);
 						break;
 					}
 					case 7:{
@@ -142,40 +170,13 @@ public class UseEmployee {
 	}
 	
 	
-	public static Employee selectEmployee(Scanner input) {
-		Employee selected = null;
-		do {
-			println("Please select an employee by employee number");
-			selected = Employee.findByEmployeeNo(getIntAnswer(input));
-			if( selected == null ) {
-				println("NO RESULT WAS FOUND");
-				continue;
-			}
-		}
-		while(selected == null);
-		return selected;
-	}
 	
-	public static Employee selectDeletedEmployee(Scanner input) {
-		Employee selected = null;
-		do {
-			println("Please select an employee by employee number");
-			selected = Employee.selectAnDeletedEmployee(getIntAnswer(input));
-			if( selected == null ) {
-				println("NO RESULT WAS FOUND");
-				continue;
-			}
-		}
-		while(selected == null);
-		return selected;
-	}
 
 	
 	
 	
-	////
+	/////////////////////////////////////////////////////////////////////
 	public static int getIntAnswer( Scanner input) {
-//		printBorder();
 		print("Answer: ");
 		return input.nextInt();
 	}
